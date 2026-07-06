@@ -1,0 +1,6 @@
+groq
+flask
+requests
+gspread
+google-auth
+python-dotenv
