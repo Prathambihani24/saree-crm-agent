@@ -43,6 +43,12 @@ def handle_customer_message(
             sender_phone=phone,
             sender_name=name,
         )
+        if result["sheets"] and "lead_saved" in result["sheets"]:
+            logger.info(
+                "GTM_METRIC: Lead captured | Phone: %s | Intent: %s",
+                phone,
+                agent_response["intent"]
+            )
 
     if send_whatsapp and phone:
         if config.whatsapp_configured():

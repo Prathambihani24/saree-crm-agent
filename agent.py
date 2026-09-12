@@ -147,18 +147,23 @@ def process_message(
 
     messages.append({"role": "user", "content": customer_message})
 
-    client = get_client()
-    completion = client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            *messages,
-        ],
-        temperature=0.4,
-        max_tokens=700,
-        response_format={"type": "json_object"},
-    )
+    try:
+        client = get_client()
+        completion = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                *messages,
+            ],
+            temperature=0.4,
+            max_tokens=700,
+            response_format={"type": "json_object"},
+        )
 
-    content = completion.choices[0].message.content or ""
-    parsed = _normalize_response(_extract_json(content))
+        content = completion.choices[0].message.content or ""
+        parsed = _normalize_response(_extract_json(content))
+    except Exception:
+        logger.exception("Agent failed to process message or parse JSON")
+        parsed = _default_response(customer_message)
+
     return _merge_customer_context(parsed, customer_name, customer_phone)

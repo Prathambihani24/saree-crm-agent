@@ -14,6 +14,7 @@ def verify_webhook(mode: str, token: str, challenge: str) -> Tuple[str, int]:
     return "Forbidden", 403
 
 
+@retry(retries=3, delay=1.0, exceptions=(requests.RequestException,))
 def send_message(to: str, body: str) -> Dict[str, Any]:
     if not config.whatsapp_configured():
         raise ValueError("Meta WhatsApp credentials are not configured")
