@@ -6,6 +6,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 
 import config
+from utils import retry
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,7 @@ def _now() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
+@retry(retries=3, delay=1.0)
 def get_client() -> gspread.Client:
     creds = Credentials.from_service_account_file(
         config.GOOGLE_CREDENTIALS_PATH,
@@ -85,6 +87,7 @@ def _get_worksheet(name: str, headers: list):
     return worksheet
 
 
+@retry(retries=3, delay=1.0)
 def append_lead(
     name: str,
     phone: str,
@@ -100,6 +103,7 @@ def append_lead(
     )
 
 
+@retry(retries=3, delay=1.0)
 def append_order(
     name: str,
     phone: str,
@@ -116,6 +120,7 @@ def append_order(
     )
 
 
+@retry(retries=3, delay=1.0)
 def append_followup(
     name: str,
     phone: str,

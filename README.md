@@ -1,6 +1,14 @@
 # Saree CRM Agent
 
-AI-powered WhatsApp automation for a D2C saree and kurti business — built entirely on **free APIs**.
+AI-powered WhatsApp automation for a D2C saree and kurti business — built for reliability and growth.
+
+## 🚀 GTM Engineering Highlights
+This project isn't just a wrapper; it's designed as a GTM tool to maximize lead conversion and operational efficiency:
+
+- **API Resilience**: Implements a custom retry mechanism for transient failures in WhatsApp and Google Sheets APIs, ensuring no lead is lost due to network blips.
+- **Structured Intent Classification**: Uses Llama 3 (70B) with strict JSON mode to classify customer intent in real-time, enabling precise CRM routing.
+- **Zero-Latency CRM Automation**: Direct integration with Google Sheets as a lightweight CRM, providing instant visibility into "Hot" leads for the sales team.
+- **Growth Observability**: Integrated `GTM_METRIC` logging to track lead capture rates and intent distribution directly from the server logs.
 
 | Service | Purpose | Cost |
 |---------|---------|------|
@@ -249,7 +257,6 @@ Optional fields:
 ---
 
 ## How messages flow
-
 ```
 Customer WhatsApp message
         │
@@ -259,10 +266,19 @@ Meta Cloud API webhook  →  POST /webhook/whatsapp
         ▼
 Groq (Llama 3 70B)  →  { reply, intent, lead_data }
         │
-        ├──► Google Sheets (Leads / Orders / Follow-ups)
+        ├──► Google Sheets (CRM: Leads / Orders / Follow-ups)
+        │    └─ Triggered based on intent classification
         │
         └──► Meta API sends Hinglish reply to customer
 ```
+
+---
+
+## Technical Decisions
+- **Hinglish AI**: Chose Llama 3 via Groq for low-latency, high-reasoning capabilities in regional Indian dialects.
+- **JSON-First API**: Enforced `response_format={"type": "json_object"}` to ensure the AI output can be programmatically routed to the CRM without fragile regex parsing.
+- **Stateless Webhook**: Designed the Flask server to be stateless, allowing for easy horizontal scaling as lead volume grows.
+- **Safe Writes**: Wrapped Google Sheets operations in `safe_record_agent_result` to ensure a CRM failure doesn't crash the customer's chat experience.
 
 ---
 
